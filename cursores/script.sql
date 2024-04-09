@@ -1,3 +1,37 @@
+-- cursor com parâmetro nomeado e por ordem
+-- exibir nome dos youtubers que começam a partir de 2010 e que têm, pelo menos, 60MI inscritos
+-- Bloquinho anônimo
+DO $$
+
+DECLARE
+	v_ano INT := 2010;
+	v_inscritos INT := 60000000;
+	cur_ano_inscritos CURSOR (ano INT, inscritos INT) FOR
+	SELECT youtuber FROM tb_youtubers WHERE starded >= ano AND subscribers >= inscritos;
+	v_youtuber VARCHAR (200);
+
+BEGIN
+	--2. Abertura do CURSOR
+	--essa, ´passando argumentos pela ordem
+	--OPEN cur_ano_inscritos (v_ano, v_inscritos);
+	-- ou essa, passando argumentos pelo nome
+	--OPEN cur_ano_inscritos (inscritos :=v_inscritos, ano := v_=ano);
+	OPEN cur_ano_inscritos (ano := v_ano, inscritos := v_inscritos);
+	LOOP
+	-- 3. Recuperação
+		-- Buscar normalize
+		FETCH cur_ano_inscritos INTO v_youtuber;
+		-- sair, se for o caso
+		EXIT WHEN NOT FOUND;
+		-- exibir, se puder
+		RAISE NOTICE '%', v_youtuber;
+	END LOOP;
+	-- 4. Fechamento
+	CLOSE cur_ano_inscritos;
+END;
+$$
+
+
 --cursor vinculado (bound)
 --exibir nome de canal concatenado a seu numero de inscritos
 
